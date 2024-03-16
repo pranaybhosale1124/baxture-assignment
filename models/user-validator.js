@@ -8,7 +8,7 @@ const logger = require('../logs/logger');
     ];
 
     const userParamsValidationRules = [
-        param('userId').notEmpty().isString(),
+        param('userId').notEmpty().isString().isLength({ min: 36, max: 36 }),
     ];
 
 function handleValidationErrors(req, res, next) {

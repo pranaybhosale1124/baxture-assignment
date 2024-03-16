@@ -3,6 +3,8 @@
 Language used : Javascript
 Framework : ExpressJS
 
+endpoint :  http://localhost:4200/api/users/@@@@@
+
 Mandatory points :
 
 1. Endpoints created
@@ -36,9 +38,12 @@ Bonus Points : Partially
     have not written a custom logic (round -robbin) for distributing a load & for port numbers.
     cluster module by default uses round-robbin for distributing a load (as per research)
     number of worker threads = num of CPUs
+
+    in order to use clustering seperate cluster.js is writtenn in /bin
+
     steps to test load balancing :
         start application using     ->  npm run start:multi
         open another terminal & run ->  node test-cluster
-                                        this will send ~250 requests per second to 'index' router.
+                                        this will send total 500 requests to 'index' router.
                                         index API is designed to take 500ms to process each request
         check "error.log" file to see process.ids that each request was resolved by (or was distributed to) 

@@ -57,9 +57,9 @@ router.get('/users/:userId', userParamsValidationRules, handleValidationErrors, 
 router.post('/users', userBodyValidationRules, handleValidationErrors, async (req, res) => {
   try {
     const uniqueKey = uuidv4();
-    const userData = req.body;
-    userData.id = uniqueKey
-    let op = await userData.push(userData);
+    const newUser = req.body;
+    newUser.id = uniqueKey
+    let op = await userData.push(newUser);
     return res.status(201).json({
       message: `INSERTED ${op}`
     });
@@ -87,12 +87,10 @@ router.put('/users/:userId', userParamsValidationRules, userBodyValidationRules,
       user.hobbies = hobbies ? hobbies : user.hobbies
       logger.error(user);
       return res.status(200).json({
-        code: 200,
         message: 'Updated'
       });
     } else {
       return res.status(404).json({
-        code: 404,
         error: 'User not found'
       });
     }
@@ -115,12 +113,10 @@ router.delete('/users/:userId', userParamsValidationRules, handleValidationError
     if (index !== -1) {
       userData.splice(index, 1);
       res.status(200).json({
-        code: 204,
         message: 'User deleted successfully'
       });
     } else {
       res.status(404).json({
-        code: 404,
         message: 'No User'
       });
     }
