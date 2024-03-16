@@ -1,4 +1,5 @@
 const { body,param, validationResult } = require('express-validator');
+const logger = require('../logs/logger');
 
     const userBodyValidationRules = [
         body('username').notEmpty().isString(),
@@ -14,6 +15,7 @@ function handleValidationErrors(req, res, next) {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
+        logger.error(errors)
         return res.status(400).json({
             code: 402,
             error: 'Validation Failed'

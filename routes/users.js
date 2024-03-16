@@ -3,7 +3,7 @@ var router = express.Router();
 const { v4: uuidv4 } = require('uuid');
 const usersTable = require('../models/user')
 const { userBodyValidationRules, userParamsValidationRules, handleValidationErrors } = require('../models/user-validator')
-
+const logger = require('../logs/logger');
 
 async function getUserById(id) {
   return await usersTable.find((user) => {
@@ -26,7 +26,7 @@ router.get('/users', async (req, res) => {
       data: allUsers
     });
   } catch (err) {
-    console.log(err);
+    logger.error('This is an error message');
     return res.status(400).json({
       code: 400,
       message: 'Something Went Wrong'
@@ -51,7 +51,7 @@ router.get('/users/:userId', userParamsValidationRules, handleValidationErrors, 
       });
     }
   } catch (err) {
-    console.log(err);
+    logger.error(err);
     return res.status(400).json({
       code: 400,
       message: 'Something Went Wrong'
@@ -71,7 +71,7 @@ router.post('/users', userBodyValidationRules, handleValidationErrors, async (re
       message: `INSERTED ${op}`
     });
   } catch (err) {
-    console.log(err);
+    logger.error(err);
     return res.status(204).json({
       code: 204,
       message: `Something went Wrong`
@@ -83,7 +83,7 @@ router.post('/users', userBodyValidationRules, handleValidationErrors, async (re
 router.put('/users/:userId', userParamsValidationRules, userBodyValidationRules, handleValidationErrors, async (req, res) => {
   try {
     let userId = req.params.userId
-    console.log((userId.length));
+    logger.error((userId.length));
     let username = req.body.username;
     let age = req.body.age;
     let hobbies = req.body.hobbies;
@@ -93,7 +93,7 @@ router.put('/users/:userId', userParamsValidationRules, userBodyValidationRules,
       user.username = username ? username : user.username;
       user.age = age ? age : username.age;
       user.hobbies = hobbies ? hobbies : user.hobbies
-      console.log(user);
+      logger.error(user);
       return res.status(200).json({
         code: 200,
         message: 'Updated'
@@ -105,7 +105,7 @@ router.put('/users/:userId', userParamsValidationRules, userBodyValidationRules,
       });
     }
   } catch (err) {
-    console.log(err);
+    logger.error(err);
     return res.status(400).json({
       code: 400,
       message: 'Something Went Wrong'
@@ -120,7 +120,7 @@ router.delete('/users/:userId', userParamsValidationRules, handleValidationError
     const index = usersTable.findIndex((user) => {
       return user.id === userId
     });
-    console.log(index);
+    logger.error(index);
     if (index !== -1) {
       usersTable.splice(index, 1);
       res.status(200).json({
@@ -134,7 +134,7 @@ router.delete('/users/:userId', userParamsValidationRules, handleValidationError
       });
     }
   } catch (err) {
-    console.log(err);
+    logger.error(err);
     res.status(500).json({
       code: 500,
       message: 'Something Went Wrong'
