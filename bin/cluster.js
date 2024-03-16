@@ -1,24 +1,13 @@
-#!/usr/bin/env node
 
-/**
- * Module dependencies.
- */
-
-
-var app = require('../app');
+const app = require('../app');
 const cluster = require('cluster');
-var http = require('http');
+const http = require('http');
 const numCPUs = require('os').cpus().length;
-/**
- * Get port from environment and store in Express.
- */
 
 var port = normalizePort(process.env.PORT || 3000);
 app.set('port', port);
 
-/**
- * Create HTTP server.
- */
+
 if (cluster.isMaster) {
     console.log(`Master ${process.pid} is running`);
 
@@ -32,19 +21,14 @@ if (cluster.isMaster) {
         cluster.fork();
     });
 } else {
-
     var port = normalizePort(process.env.PORT);
     app.set('port', port);
     var server = http.createServer(app);
 
     server.listen(port);
     server.on('error', onError);
-    server.on('listening', onListening);
-
-    
+    server.on('listening', onListening);  
     console.log(`Worker ${process.pid} started`);
-
-    
 }
 
 function normalizePort(val) {

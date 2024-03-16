@@ -18,7 +18,7 @@ const logger = winston.createLogger({
         })
     ),
     transports: [
-        new winston.transports.File({ filename: 'logs/error.log', level: 'error', 'timestamp':true })
+        new winston.transports.File({ filename: 'logs/error.log', 'timestamp':true })
       ],
 })
 

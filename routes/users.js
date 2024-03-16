@@ -1,12 +1,12 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
-const usersTable = require('../models/user')
+const userData = require('../models/user')
 const { userBodyValidationRules, userParamsValidationRules, handleValidationErrors } = require('../models/user-validator')
 const logger = require('../logs/logger');
 
 async function getUserById(id) {
-  return await usersTable.find((user) => {
+  return await userData.find((user) => {
     return user.id === id
   })
 }
@@ -14,22 +14,19 @@ async function getUserById(id) {
 // get All Users
 router.get('/users', async (req, res) => {
   try {
-    let allUsers = await usersTable;
+    let allUsers = userData;
     if (allUsers.length < 1)
       return res.status(404).json({
-        code: 404,
         message: 'No Users',
         data: []
       });
     return res.status(200).json({
-      code: 200,
       data: allUsers
     });
   } catch (err) {
-    logger.error('This is an error message');
-    return res.status(400).json({
-      code: 400,
-      message: 'Something Went Wrong'
+    logger.error(err);
+    return res.status(500).json({
+      message: 'Internal Server Error'
     });
   }
 });
@@ -41,20 +38,17 @@ router.get('/users/:userId', userParamsValidationRules, handleValidationErrors, 
     let user = await getUserById(userId)
     if (user) {
       return res.status(200).json({
-        code: 200,
         data: user
       });
     } else {
       return res.status(404).json({
-        code: 404,
         error: 'User not found'
       });
     }
   } catch (err) {
     logger.error(err);
-    return res.status(400).json({
-      code: 400,
-      message: 'Something Went Wrong'
+    return res.status(500).json({
+      message: 'Internal Server Error'
     });
   }
 });
@@ -65,16 +59,14 @@ router.post('/users', userBodyValidationRules, handleValidationErrors, async (re
     const uniqueKey = uuidv4();
     const userData = req.body;
     userData.id = uniqueKey
-    let op = await usersTable.push(userData);
+    let op = await userData.push(userData);
     return res.status(201).json({
-      code: 201,
       message: `INSERTED ${op}`
     });
   } catch (err) {
     logger.error(err);
-    return res.status(204).json({
-      code: 204,
-      message: `Something went Wrong`
+    return res.status(500).json({
+      message: 'Internal Server Error'
     });
   }
 });
@@ -106,9 +98,8 @@ router.put('/users/:userId', userParamsValidationRules, userBodyValidationRules,
     }
   } catch (err) {
     logger.error(err);
-    return res.status(400).json({
-      code: 400,
-      message: 'Something Went Wrong'
+    return res.status(500).json({
+      message: 'Internal Server Error'
     });
   }
 });
@@ -117,12 +108,12 @@ router.put('/users/:userId', userParamsValidationRules, userBodyValidationRules,
 router.delete('/users/:userId', userParamsValidationRules, handleValidationErrors, async (req, res) => {
   try {
     const userId = req.params.userId;
-    const index = usersTable.findIndex((user) => {
+    const index = userData.findIndex((user) => {
       return user.id === userId
     });
     logger.error(index);
     if (index !== -1) {
-      usersTable.splice(index, 1);
+      userData.splice(index, 1);
       res.status(200).json({
         code: 204,
         message: 'User deleted successfully'
@@ -136,8 +127,7 @@ router.delete('/users/:userId', userParamsValidationRules, handleValidationError
   } catch (err) {
     logger.error(err);
     res.status(500).json({
-      code: 500,
-      message: 'Something Went Wrong'
+      message: 'Internal Server Error'
     });
   }
 });
