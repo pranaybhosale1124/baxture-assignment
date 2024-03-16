@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
 const { v4: uuidv4 } = require('uuid');
-
-const usersTable = require('../bin/user')
+const usersTable = require('../models/user')
+const { userBodyValidationRules, userParamsValidationRules, handleValidationErrors } = require('../models/user-validator')
 
 
 async function getUserById(id) {
@@ -35,7 +35,7 @@ router.get('/users', async (req, res) => {
 });
 
 // get User by Id
-router.get('/users/:userId', async (req, res) => {
+router.get('/users/:userId', userParamsValidationRules, handleValidationErrors, async (req, res) => {
   try {
     const userId = req.params.userId;
     let user = await getUserById(userId)
@@ -60,7 +60,7 @@ router.get('/users/:userId', async (req, res) => {
 });
 
 // Insert User
-router.post('/users', async (req, res) => {
+router.post('/users', userBodyValidationRules, handleValidationErrors, async (req, res) => {
   try {
     const uniqueKey = uuidv4();
     const userData = req.body;
@@ -80,10 +80,10 @@ router.post('/users', async (req, res) => {
 });
 
 //Update User
-router.put('/users/:userId', async (req, res) => {
+router.put('/users/:userId', userParamsValidationRules, userBodyValidationRules, handleValidationErrors, async (req, res) => {
   try {
     let userId = req.params.userId
-
+    console.log((userId.length));
     let username = req.body.username;
     let age = req.body.age;
     let hobbies = req.body.hobbies;
@@ -114,7 +114,7 @@ router.put('/users/:userId', async (req, res) => {
 });
 
 //Delete User
-router.delete('/users/:userId', async (req, res) => {
+router.delete('/users/:userId', userParamsValidationRules, handleValidationErrors, async (req, res) => {
   try {
     const userId = req.params.userId;
     const index = usersTable.findIndex((user) => {
