@@ -17,8 +17,8 @@ function handleValidationErrors(req, res, next) {
     if (!errors.isEmpty()) {
         logger.error(errors)
         return res.status(400).json({
-            code: 402,
-            error: 'Validation Failed'
+            message: 'Validation Failed',
+            error : errors
         });
     }
     next();
